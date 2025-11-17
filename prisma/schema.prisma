@@ -27,10 +27,12 @@ model Task {
 }
 
 model User{
-  id        Int      @id @default(autoincrement())  
-  name      String
-  passwordHash String
-  email     String   @unique
+  id             Int      @id @default(autoincrement())  
+  name           String
+  passwordHash   String
+  email          String   @unique
+  active         Boolean  @default(true)
+  avatar         String?
 
   Task Task[]
 

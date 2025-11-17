@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
+import { IsNotEmpty, IsString, MinLength } from "class-validator";
 
 export class CreateTaskDto{
     @IsString({ message: "O nome deve ser uma string" })
@@ -10,8 +10,4 @@ export class CreateTaskDto{
     @MinLength(5)
     @IsNotEmpty()
     readonly description: string;
-
-    @IsNumber()
-    @IsNotEmpty()
-    readonly userId: number;
 }

@@ -11,8 +11,6 @@ export class ApiExceptionFilter implements ExceptionFilter {
         const status = exception.getStatus();
         const exceptionResponse = exception.getResponse();
 
-        console.log("PASSANDO PELO FILTER");
-
         response.status(status).json({
             statusCode: status,
             timestamp: new Date().toISOString(),
