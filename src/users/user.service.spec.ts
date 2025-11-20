@@ -27,7 +27,11 @@ describe('UserService', () => {
                     provide: PrismaService,
                     useValue: {
                         user: {
-                            create: jest.fn()
+                            create: jest.fn().mockResolvedValue({
+                                id: 1,
+                                email: 'teste001@teste.com',
+                                name: 'Teste 001'
+                            }),
                         }
                     }
                 },
@@ -67,7 +71,7 @@ describe('UserService', () => {
     
         jest.spyOn(hashingService, 'hash').mockResolvedValue('HASH_MOCK_EXEMPLO');
 
-        await userService.create(createUserDto);
+        const result = await userService.create(createUserDto);
 
         expect(hashingService.hash).toHaveBeenCalled();
         expect(prismaService.user.create).toHaveBeenCalledWith({
@@ -82,6 +86,12 @@ describe('UserService', () => {
                 name: true, 
                 email: true,
             }
+        });
+
+        expect(result).toEqual({
+            id: 1,
+            email: 'teste001@teste.com',
+            name: 'Teste 001'
         });
     })
 })
