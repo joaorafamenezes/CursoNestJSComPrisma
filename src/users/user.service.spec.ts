@@ -13,6 +13,7 @@ import { UsersService } from "./users.service"
 import { HashServiceProtocol } from '../auth/hash/hashing.service';
 import { Test, TestingModule } from "@nestjs/testing";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 describe('UserService', () => {
     let userService: UsersService;
@@ -32,6 +33,7 @@ describe('UserService', () => {
                                 email: 'teste001@teste.com',
                                 name: 'Teste 001'
                             }),
+                            findFirst: jest.fn()
                         }
                     }
                 },
@@ -92,6 +94,65 @@ describe('UserService', () => {
             id: 1,
             email: 'teste001@teste.com',
             name: 'Teste 001'
+        });
+    })
+
+    it('should return a user when founded', async () => {
+        // Preciso mockar o prismaService.user.findUnique
+        // Chamar o método findOne do userService
+        // Verificar se o retorno é o usuário esperado
+
+        const mockUser = {
+            id: 1,
+            name: 'Teste 001',
+            email: 'teste@teste.com',
+            avatar: null,
+            Task: [],            
+            passwordHash: 'HASH_MOCK_EXEMPLO',
+            active: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }
+
+        jest.spyOn(prismaService.user, 'findFirst').mockResolvedValue(mockUser);        
+
+        const result = await userService.findOne(1);
+        
+        expect(prismaService.user.findFirst).toHaveBeenCalledWith({
+            where: { id: 1 },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                Task: true,
+                avatar: true
+            }
+        });
+
+        expect(result).toEqual(mockUser);
+
+    })  
+
+    it('shoul throw error exception when user not found', async () => {
+        // Preciso mockar o prismaService.user.findUnique para retornar null
+        // Chamar o método findOne do userService
+        // Verificar se lança a exceção de usuário não encontrado
+
+        jest.spyOn(prismaService.user, 'findFirst').mockResolvedValue(null);
+
+        await expect(userService.findOne(999)).rejects.toThrow(
+            new HttpException('Usuário não encontrado!', HttpStatus.BAD_REQUEST)
+        );
+
+        expect(prismaService.user.findFirst).toHaveBeenCalledWith({
+            where: { id: 999 },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                avatar: true,
+                Task: true
+            }
         });
     })
 })

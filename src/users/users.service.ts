@@ -15,7 +15,7 @@ export class UsersService {
     ) {}
 
     async findOne(id: number) {
-        const user = await this.prisma.user.findUnique({
+        const user = await this.prisma.user.findFirst({
             where: { id },
             select: {
                 id: true,
@@ -27,7 +27,7 @@ export class UsersService {
         });
 
         if(!user) {
-            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            throw new HttpException('Usuário não encontrado!', HttpStatus.NOT_FOUND);
         }
 
         return user;
